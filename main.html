@@ -1,18 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>I'm not a robot</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main>
-      <!-- solution start -->
-      
-      <!-- solution end -->
-    </main>
-    <script src="./script.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>I'm not a robot</title>
+  <style>
+    .container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .tiles {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .tiles img {
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+    }
+    .tiles img.selected {
+      border: 3px solid #007BFF;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
+
+  <div class="tiles" id="tilesContainer">
+    <!-- Images will be dynamically added here -->
+  </div>
+
+  <button id="reset">Reset</button>
+  <button id="verify">Verify</button>
+
+  <p id="result"></p>
+</div>
+
+<script>
+  const images = [
+    'https://via.placeholder.com/100?text=1',
+    'https://via.placeholder.com/100?text=2',
+    'https://via.placeholder.com/100?text=3',
+    'https://via.placeholder.com/100?text=4',
+    'https://via.placeholder.com/100?text=5'
+  ];
+
+  const tilesContainer = document.getElementById('tilesContainer');
+  const resetButton = document.getElementById('reset');
+  const verifyButton = document.getElementById('verify');
+  const resultPara = document.getElementById('result');
+  const message = document.getElementById('h');
+
+  let clickedTiles = [];
+
+  // Randomize and render images
+  function renderTiles() {
+    const tiles = [...images];
+    const duplicateIndex = Math.floor(Math.random() * tiles.length);
+    tiles.push(tiles[duplicateIndex]); // Add duplicate
+
+    // Shuffle tiles
+    for (let i = tiles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
+
+    tilesContainer.innerHTML = '';
+    tiles.forEach((src, idx) => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.dataset.id = src;
+      img.addEventListener('click', () => selectTile(img));
+      tilesContainer.appendChild(img);
+    });
+  }
+
+  function selectTile(img) {
+    if (clickedTiles.includes(img)) return; // Prevent double-click
+    if (clickedTiles.length >= 2) return; // Only allow two selections
+
+    img.classList.add('selected');
+    clickedTiles.push(img);
+
+    if (clickedTiles.length === 1) {
+      resetButton.style.display = 'inline-block';
+      resultPara.textContent = '';
+    }
+
+    if (clickedTiles.length === 2) {
+      verifyButton.style.display = 'inline-block';
+    }
+  }
+
+  resetButton.addEventListener('click', () => {
+    clickedTiles.forEach(tile => tile.classList.remove('selected'));
+    clickedTiles = [];
+    verifyButton.style.display = 'none';
+    resetButton.style.display = 'none';
+    resultPara.textContent = '';
+  });
+
+  verifyButton.addEventListener('click', () => {
+    verifyButton.style.display = 'none';
+    if (clickedTiles[0].dataset.id === clickedTiles[1].dataset.id) {
+      resultPara.textContent = 'You are a human. Congratulations!';
+    } else {
+      resultPara.textContent = "We can't verify you as a human. You selected the non-identical tiles.";
+    }
+  });
+
+  // Initialize
+  renderTiles();
+</script>
+
+</body>
 </html>
