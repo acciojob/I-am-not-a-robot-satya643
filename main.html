@@ -4,38 +4,12 @@
   <meta charset="UTF-8">
   <title>I'm not a robot</title>
   <style>
-    .container {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .tiles {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .tiles img {
-      width: 100px;
-      height: 100px;
-      cursor: pointer;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-    }
-    .tiles img.selected {
-      border: 3px solid #007BFF;
-    }
-    button {
-      margin: 10px;
-      padding: 10px 15px;
-      font-size: 16px;
-      cursor: pointer;
-      display: none;
-    }
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-    }
+    .container { text-align: center; margin-top: 20px; }
+    .tiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+    .tiles img { width: 100px; height: 100px; cursor: pointer; border: 2px solid #ccc; border-radius: 5px; }
+    .tiles img.selected { border: 3px solid #007BFF; }
+    button { margin: 10px; padding: 10px 15px; font-size: 16px; cursor: pointer; display: none; }
+    #result { margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -43,9 +17,7 @@
 <div class="container">
   <h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
 
-  <div class="tiles" id="tilesContainer">
-    <!-- Images will be dynamically added here -->
-  </div>
+  <div class="tiles" id="tilesContainer"></div>
 
   <button id="reset">Reset</button>
   <button id="verify">Verify</button>
@@ -66,11 +38,9 @@
   const resetButton = document.getElementById('reset');
   const verifyButton = document.getElementById('verify');
   const resultPara = document.getElementById('result');
-  const message = document.getElementById('h');
 
   let clickedTiles = [];
 
-  // Randomize and render images
   function renderTiles() {
     const tiles = [...images];
     const duplicateIndex = Math.floor(Math.random() * tiles.length);
@@ -87,14 +57,16 @@
       const img = document.createElement('img');
       img.src = src;
       img.dataset.id = src;
+      // Assign Cypress-friendly classes
+      img.classList.add('img' + ((idx % 5) + 1));
       img.addEventListener('click', () => selectTile(img));
       tilesContainer.appendChild(img);
     });
   }
 
   function selectTile(img) {
-    if (clickedTiles.includes(img)) return; // Prevent double-click
-    if (clickedTiles.length >= 2) return; // Only allow two selections
+    if (clickedTiles.includes(img)) return;
+    if (clickedTiles.length >= 2) return;
 
     img.classList.add('selected');
     clickedTiles.push(img);
@@ -126,7 +98,6 @@
     }
   });
 
-  // Initialize
   renderTiles();
 </script>
 
